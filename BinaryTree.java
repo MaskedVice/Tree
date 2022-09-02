@@ -26,13 +26,63 @@ public class BinaryTree {
         // System.out.println();
         // // DFS(root);
         // allTraversal(root);
-        System.out.println(maxHeight(root));
+        //System.out.println(maxHeight(root));
+        //System.out.println(isBalanced(root) != -1 ? true : false);
+        int[] max = new int[1];
+        // int temp = diameter(root,max);
+        // System.out.println(max[0]);
+        int t = maxPathSum(root,max);
+        System.out.println(max[0]);
     }
+    //#region MaxPathSun
+    private static int maxPathSum(Node root, int[] max) {
+        if(root == null)
+            return 0;
+        int ls = maxPathSum(root.left, max);
+        int rs = maxPathSum(root.right, max);
 
+        max[0] = Math.max(max[0], ls + rs + root.val);
+
+        return root.val + Math.max(ls,rs);
+    }
+    //#endregion
+    
+    //#region diameter
+
+    private static int diameter(Node root,int[] max) {
+        if(root == null)
+        {
+            return 0;
+        }
+        int ld = diameter(root.left,max);
+        int rd = diameter(root.right,max);
+        max[0] = Math.max(max[0],ld+rd);
+        return 1 + Math.max(ld,rd);
+    }
+    //#endregion
+    
+    //#region IsBalanced
+    private static int isBalanced(Node root) {
+        if(root == null) 
+            return 0;
+
+        int lh = isBalanced(root.left);
+        int rh = isBalanced(root.right);
+        if(lh != rh || lh == -1 || rh == -1)
+        {
+            return -1;
+        }
+        else{
+            return Math.max(lh,rh) + 1;
+        }
+    }
+    //#endregion
+
+    //#region Max Depth/Height
     private static int maxHeight(Node root) 
     {
         if(root == null) 
-            return 1;
+            return 0;
 
         int lh = maxHeight(root.left);
         int rh = maxHeight(root.right);
@@ -40,7 +90,9 @@ public class BinaryTree {
         return Math.max(lh,rh) + 1; 
 
     }
+    //#endregion
 
+    //#region All Traversal
     private static void allTraversal(Node root)
     {
         Node temp = root;
@@ -82,6 +134,7 @@ public class BinaryTree {
 
 
     }
+    //#endregion
 
     //#region DFS
     private static void DFS(Node root)
@@ -104,7 +157,6 @@ public class BinaryTree {
         }
     }
 //#endregion
-
 
     //region BFS
     private static void BFS(Node root,String s)

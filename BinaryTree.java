@@ -1,5 +1,8 @@
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Queue;
 import java.util.Stack;
 
@@ -18,7 +21,7 @@ public class BinaryTree {
         root.left.right.left = new Node(8);
         root.right.right.left = new Node(9);
         root.right.right.right = new Node(10);
-        // BFS(root ,"In");
+         // BFS(root ,"In");
         // System.out.println();
         // BFS(root,"Pr");
         // System.out.println();
@@ -28,13 +31,173 @@ public class BinaryTree {
         // allTraversal(root);
         //System.out.println(maxHeight(root));
         //System.out.println(isBalanced(root) != -1 ? true : false);
-        int[] max = new int[1];
+        // int[] max = new int[1];
         // int temp = diameter(root,max);
+        // // System.out.println(max[0]);
+        // int t = maxPathSum(root,max);
         // System.out.println(max[0]);
-        int t = maxPathSum(root,max);
-        System.out.println(max[0]);
+        // VerticalTopBotView(root,"V");
+        // RightLeftView(root,"R");
+        // RightLeftView(root,"L");
+        // PathToNode(root,9);
+        // LowestCommonAncestor(root,6,10);
     }
-    //#region MaxPathSun
+
+
+    //#region LCA
+    private static void LowestCommonAncestor(Node root, int a , int b) {
+        Node temp = root;
+        Node ans = LCA(temp,a,b);
+        System.out.println(ans.val);
+    }
+    private static Node LCA(Node root,int a,int b) {
+        if(root == null || root.val == a || root.val == b)
+            return root;
+        Node left = LCA(root.left,a,b);
+        Node right = LCA(root.right,a,b);
+        if(left == null)
+        {
+            return right;
+        }
+        else if(right == null)
+        {
+            return left;
+        }
+        else 
+            return root;
+        
+    }
+    //#endregion
+
+    //#region Path To Node
+    private static void PathToNode(Node root, int i) {
+        Node temp = root;
+        ArrayList<Integer> ans = new ArrayList<>();
+        int found = findPath(root,ans,i);
+        if(found != -1)
+        {
+            ans.forEach(t -> System.out.print(t + " "));
+        }
+    }
+
+    private static int findPath(Node root, ArrayList<Integer> ans, int i) {
+        if(root == null)
+        {
+            return -1;
+        }
+        if(root.val == i){
+            ans.add(root.val);
+            return 1;
+        }
+        int a = findPath(root.left, ans, i);
+        if(a != -1)
+        {
+            ans.add(root.val);
+            return 1;
+        }
+        int b = findPath(root.right, ans, i);
+        if(b !=-1)
+        {
+            ans.add(root.val);
+            return 1;
+        }
+        return -1;
+    }
+    //#endregion
+
+    //#region Left Rigth View
+    private static void RightLeftView(Node root, String s) {
+        Node temp = root;
+        ArrayList<Integer> ans = new ArrayList<>();
+        if(s == "R")
+        {
+            rightView(ans,temp,0);
+        }
+        else{
+            leftView(ans,temp,0);
+        }
+        for(int i : ans){
+            System.out.print(i + " ");
+        }
+        System.out.println();
+    }
+
+    private static void leftView(ArrayList<Integer> ans, Node root, int i) {
+        if(root == null)
+        {
+            return;
+        }
+        if(i == ans.size())
+        {
+            ans.add(root.val);
+        }
+        leftView(ans, root.left, i+1);
+        leftView(ans, root.right, i+1);
+    }
+
+    private static void rightView(ArrayList<Integer> ans, Node root, int i) {
+        if(root == null)
+        {
+            return;
+        }
+        if(i == ans.size())
+        {
+            ans.add(root.val);
+        }
+        rightView(ans, root.right, i+1);
+        rightView(ans, root.left, i+1);
+    }
+    //#endregion
+
+    //#region Vertical Top Bot view
+    private static void VerticalTopBotView(Node root, String type){
+        ArrayList<Tuple> unsorted = new ArrayList<>();
+        VerticalTraversal(unsorted,root,0,0);
+        Collections.sort(unsorted,new TupleSortXY());
+        int startIndex = unsorted.get(0).x;
+        int endingIndex = unsorted.get(unsorted.size()-1).x;
+        ArrayList<List<Integer>> ans = new ArrayList<>();
+        while(startIndex<=endingIndex)
+        {
+            int l = startIndex;
+            List<Integer> level = new ArrayList<Integer>();
+            unsorted.forEach(t -> {
+                if(t.x == l)
+                {
+                    level.add(t.val);
+                }});
+                startIndex++;
+                ans.add(level);
+        }
+        if(type == "V")
+        {
+            for (List<Integer> list : ans) {
+                System.out.println(list.toString());                
+            }
+        }
+        else if(type == "T")
+        {
+            for(List<Integer> l : ans){
+                System.out.println(l.get(0));
+            }
+        }
+        else
+        {
+            for(List<Integer> l : ans){
+                System.out.println(l.get(l.size()-1));
+            }
+        }
+    }
+
+    private static void VerticalTraversal(ArrayList<Tuple> tM,Node root,int i,int j) {
+        if (root == null)return;
+        tM.add(new Tuple(i, j, root.val));
+        VerticalTraversal(tM, root.left, i-1, j-1);
+        VerticalTraversal(tM, root.right, i+1, j-1);
+    }
+    //#endregion
+
+    //#region MaxPathSum
     private static int maxPathSum(Node root, int[] max) {
         if(root == null)
             return 0;
@@ -230,5 +393,18 @@ class Pair{
     {
         this.node = n;
         this.val = v;
+    }
+}
+class Tuple{
+    public int x,y,val;
+    public Tuple(int i , int j,int v){
+        this.x = i;
+        this.y = j;
+        this.val = v;
+    }
+}
+class TupleSortXY implements Comparator<Tuple>{
+    public int compare(Tuple a, Tuple b){
+        return a.x-b.x == 0 ? (b.y-a.y == 0 ? a.val-b.val:b.y-a.y) : a.x-b.x;
     }
 }

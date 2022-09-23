@@ -43,6 +43,27 @@ public class BinaryTree {
         // LowestCommonAncestor(root,6,10);
     }
 
+    //#region Level Order Traversal
+    public static void levelOrder(Node root) {
+        Queue<Node> q = new LinkedList<>();
+        q.add(root);
+        while(!q.isEmpty())
+        {
+            Node cur = q.remove();
+            System.out.print(cur.val + " ");
+            if(cur.left!= null)
+            {
+                q.add(cur.left);
+            }
+            if(cur.right != null)
+            {
+                q.add(cur.right);
+            }
+        }
+      
+    }
+    //#endregion
+
 
     //#region LCA
     private static void LowestCommonAncestor(Node root, int a , int b) {
@@ -251,7 +272,6 @@ public class BinaryTree {
         int rh = maxHeight(root.right);
 
         return Math.max(lh,rh) + 1; 
-
     }
     //#endregion
 
